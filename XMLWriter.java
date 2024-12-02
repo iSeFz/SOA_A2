@@ -84,4 +84,12 @@ public class XMLWriter {
         transformer.transform(source, result);
     }
 
+    public boolean clearXML() throws Exception {
+        File file = new File(fileName);
+        if (file.exists()) {
+            return file.delete();
+        }
+        return false;
+    }
+
 }
