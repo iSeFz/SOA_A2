@@ -368,16 +368,32 @@ public class University {
             sortStudents(selectedCriteria, true);
             JScrollPane scrollPane = (JScrollPane) managePage.getComponent(2);
             JPanel studentsListPanel = (JPanel) scrollPane.getViewport().getView();
+            try {
+                xmlWriter.clearXML();
+                for (Student s : students) {
+                    xmlWriter.storeStudentToXML(s); // Write remaining students back to the XML file
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
             loadAndDisplayStudents(studentsListPanel);
         });
 
         // Add action listener to the sort descending button
         sortDescButton.addActionListener(e -> {
-        String selectedCriteria = (String) sortComboBox.getSelectedItem();
-        sortStudents(selectedCriteria, false);
-        JScrollPane scrollPane = (JScrollPane) managePage.getComponent(2);
-        JPanel studentsListPanel = (JPanel) scrollPane.getViewport().getView();
-        loadAndDisplayStudents(studentsListPanel);
+            String selectedCriteria = (String) sortComboBox.getSelectedItem();
+            sortStudents(selectedCriteria, false);
+            JScrollPane scrollPane = (JScrollPane) managePage.getComponent(2);
+            JPanel studentsListPanel = (JPanel) scrollPane.getViewport().getView();
+            try {
+                xmlWriter.clearXML();
+                for (Student s : students) {
+                    xmlWriter.storeStudentToXML(s); // Write remaining students back to the XML file
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            loadAndDisplayStudents(studentsListPanel);
         });
 
         // Create the header panel
