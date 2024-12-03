@@ -42,6 +42,8 @@ public class University {
 
     // Main frame of the application
     private static void createMainFrame() throws Exception {
+        students = xmlParser.loadStudents();
+
         // Create the main frame
         JFrame frame = new JFrame("University Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -100,8 +102,6 @@ public class University {
         // Set the frame to be visible
         frame.getContentPane().setBackground(BACKGROUND_COLOR);
         frame.setVisible(true);
-
-        students = xmlParser.loadStudents();
     }
 
     // Add page panel creation
@@ -335,7 +335,7 @@ public class University {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Search");
-        JLabel recordCountLabel = new JLabel("Records: 0");
+        JLabel recordCountLabel = new JLabel("Records: " + students.size());
         searchPanel.add(new JLabel("Search:"));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
@@ -353,7 +353,7 @@ public class University {
 
         // Create the sort bar
         JPanel sortPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        String[] sortOptions = { "ID", "First Name", "Last Name", "GPA", "Level" };
+        String[] sortOptions = { "ID", "First Name", "Last Name", "Gender", "GPA", "Level" };
         JComboBox<String> sortComboBox = new JComboBox<>(sortOptions);
         JButton sortAscButton = new JButton("Sort Ascending");
         JButton sortDescButton = new JButton("Sort Descending");
@@ -483,6 +483,9 @@ public class University {
             case "Last Name":
                 comparator = Comparator.comparing(Student::getLastName);
                 break;
+            case "Gender":
+                comparator = Comparator.comparing(Student::getGender);
+                break;
             case "GPA":
                 comparator = Comparator.comparing(Student::getGPA);
                 break;
@@ -546,9 +549,25 @@ public class University {
         JTextField lastNameField = new JTextField(student.getLastName());
         updateDialog.add(lastNameField);
 
+        // updateDialog.add(new JLabel("Gender:"));
+        // JTextField genderField = new JTextField(student.getGender());
+        // updateDialog.add(genderField);
+
         updateDialog.add(new JLabel("Gender:"));
-        JTextField genderField = new JTextField(student.getGender());
-        updateDialog.add(genderField);
+        JPanel genderPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JRadioButton maleButton = new JRadioButton("Male");
+        JRadioButton femaleButton = new JRadioButton("Female");
+        ButtonGroup genderGroup = new ButtonGroup();
+        genderGroup.add(maleButton);
+        genderGroup.add(femaleButton);
+        genderPanel.add(maleButton);
+        genderPanel.add(femaleButton);
+        if (student.getGender().equalsIgnoreCase("Male")) {
+            maleButton.setSelected(true);
+        } else if (student.getGender().equalsIgnoreCase("Female")) {
+            femaleButton.setSelected(true);
+        }
+        updateDialog.add(genderPanel);
 
         updateDialog.add(new JLabel("GPA:"));
         JTextField gpaField = new JTextField(student.getGPA().toString());
@@ -565,7 +584,7 @@ public class University {
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
             List<String> studentData = List.of(idField.getText(), firstNameField.getText(),
-                    lastNameField.getText(), genderField.getText(), gpaField.getText(), levelField.getText(),
+                    lastNameField.getText(), maleButton.isSelected() ? "Male" : "Female", gpaField.getText(), levelField.getText(),
                     addressField.getText());
             String errorMessage = validateStudentData(studentData, true);
             if (errorMessage != null) {
@@ -574,7 +593,7 @@ public class University {
             }
             student.setFirstName(firstNameField.getText());
             student.setLastName(lastNameField.getText());
-            student.setGender(genderField.getText());
+            student.setGender(maleButton.isSelected() ? "Male" : "Female");
             student.setGPA(Double.parseDouble(gpaField.getText()));
             student.setLevel(Integer.parseInt(levelField.getText()));
             student.setAddress(addressField.getText());
