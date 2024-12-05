@@ -23,6 +23,9 @@ public class University {
     // Declare xmlWriter object to store students data
     private static XMLWriter xmlWriter = new XMLWriter();
 
+    // Declare managePage panel to store the manage page
+    private static JPanel managePage = new JPanel();
+
     // Main method to run the application
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -38,11 +41,14 @@ public class University {
         });
     }
 
-    private static JPanel managePage;
-
     // Main frame of the application
     private static void createMainFrame() throws Exception {
+        // Load students data from the XML file
         students = xmlParser.loadStudents();
+        // Check if the return is null, create an empty array
+        if (students == null) {
+            students = new ArrayList<>();
+        }
 
         // Create the main frame
         JFrame frame = new JFrame("University Management System");
@@ -637,11 +643,14 @@ public class University {
 
     // Delete student
     private static void deleteStudent(Student student) {
-        students.remove(student);
         try {
+            // Remove student from memory
+            students.remove(student);
+            // Clear all students from the XML file
             xmlWriter.clearXML();
+            // Rewrite the remaining students back to the XML file
             for (Student s : students) {
-                xmlWriter.storeStudentToXML(s); // Write remaining students back to the XML file
+                xmlWriter.storeStudentToXML(s);
             }
             JOptionPane.showMessageDialog(null, "Student deleted successfully!", "Success",
                     JOptionPane.INFORMATION_MESSAGE);
